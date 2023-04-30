@@ -27,6 +27,9 @@ public class FlappyCloud implements ActionListener {
     public int ticks;
     public int yMotion;
 
+    public boolean gameOver;
+    public boolean hasGameStarted = true;
+
 
     //Constructor
     public FlappyCloud(){
@@ -71,7 +74,7 @@ public class FlappyCloud implements ActionListener {
      * @param obstacle
      */
     public void paintObstacles(Graphics g, Rectangle obstacle){
-        g.setColor(Color.green.darker());   //Farbe der Hindernisse festlegen
+        g.setColor(Color.YELLOW.darker());   //Farbe der Hindernisse festlegen
         g.fillRect(obstacle.x, obstacle.y, obstacle.width, obstacle.height);    //Hindernisse befüllen
     }
 
@@ -85,7 +88,7 @@ public class FlappyCloud implements ActionListener {
              * Hinzufügen eines neuen Elements in die ArrayList "obstacles".
              * Video Minute 27, 31
              */
-            obstacles.add(new Rectangle(WIDTH + width + obstacles.size() * 300, HEIGHT - height - 120, width, height)); //Unteres Hindernis, Min 27
+            obstacles.add(new Rectangle(WIDTH + width + obstacles.size() * 300, HEIGHT - height - 120, width, height)); //Unteres Hindernis, Wird außerhalb der Spielfeldbreite erzeugt. Min 27
             obstacles.add(new Rectangle(WIDTH + width + (obstacles.size() -1) * 300, 0, width, HEIGHT - height - gap)); //Oberes Hindernis
         }else{
             obstacles.add(new Rectangle(obstacles.get(obstacles.size() -1).x + 600, HEIGHT -height - 120, width, height)); // Min 31
@@ -124,6 +127,22 @@ public class FlappyCloud implements ActionListener {
         g.setColor(Color.GREEN);    //Bodenfarbe festlegen
         g.fillRect(0, HEIGHT - 150, WIDTH, 20); //Bodenmaße definieren und mit Farbe füllen
 
+        /**
+         *  Hindernisse in der ArrayList einfärben, iteration durch die ArrayList
+         */
+        for (Rectangle obstacles : obstacles) {
+            paintObstacles(g, obstacles);
+        }
+
+        /**
+         * Game Over Darstellung
+         */
+        g.setColor(Color.white);
+        g.setFont(new Font("Georgia", 1, 100));
+
+        if(gameOver){
+            g.drawString("Game Over", 75, HEIGHT / 2 - 50);
+        }
 
     }
     //###################################################
@@ -138,17 +157,56 @@ public class FlappyCloud implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
 
-        /**
-         * Fallmechanismus
-         */
+        int speed = 10;
         ticks++;
 
-        if(ticks % 2 == 0 && yMotion < 15){
-            yMotion += 2;
+        if(hasGameStarted){
+            /**
+             *  Bewegung der Hindernisse
+             */
+            for (int i = 0; i < obstacles.size(); i++) {
+                Rectangle obstacle = obstacles.get(i);
+                obstacle.x -= speed; // X-Koordinate des Hindernisses wird bei jedem Durchlauf um 10 reduziert
+            }
+            //---------------------------------------
+            /**
+             * Hindernisse nach Durchlaufen des Spielfeldes aus der ArrayList entfernen
+             * Min 41
+             */
+            for (int i = 0; i < obstacles.size(); i++) {
+                Rectangle obstacle = obstacles.get(i);
+
+                if(obstacle.x + obstacle.width < 0){
+                    obstacles.remove(obstacle);
+
+                    if(obstacle.y == 0){
+                        addObstacles(false);
+                    }
+                }
+            }
+
+
+            /**
+             * Fallmechanismus Spieler
+             */
+            if(ticks % 2 == 0 && yMotion < 15){
+                yMotion += 2;
+            }
+            cloud.y += yMotion;
+
+            /**
+             * Kollisionserkennung, direkt nach Bewegung der Spielfigur (cloud.y += yMotion), gameOver-Fälle definieren
+             */
+            for (Rectangle obstacle : obstacles) {
+                if(obstacle.intersects(cloud)){
+                    gameOver = true;
+                }
+            }
+            if(cloud.y > HEIGHT - 120 || cloud.y < 0){
+                gameOver = true;
+            }
+
         }
-        cloud.y += yMotion;
-
         renderer.repaint();
-
     }
 }
