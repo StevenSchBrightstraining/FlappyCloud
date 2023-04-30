@@ -2,15 +2,12 @@ package flappyCloud;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
+import java.awt.event.*;
 import java.util.ArrayList;
 import java.util.Random;
 import javax.swing.Timer;
 
-public class FlappyCloud implements ActionListener, MouseListener {
+public class FlappyCloud implements ActionListener, MouseListener, KeyListener {
 
     //Fields
     public static FlappyCloud flappyCloud;
@@ -56,9 +53,11 @@ public class FlappyCloud implements ActionListener, MouseListener {
         jframe.setVisible(true);        //Sichtbarkeit herstellen
         jframe.setTitle("Flappy Cloud");    //Titel festlegen
         jframe.addMouseListener(this);     //Mouselistener hinzugügen, "this" bezieht sich auf den in dieser Klasse erstelltem Listener
+        jframe.addKeyListener(this);    //KeyListener hinzufügen, sodass mit Space die Methode jump() ebenfalls ausgeführt werden kann
 
         obstacles = new ArrayList<Rectangle>(); //Arraylist für Hindernisse erstellen
         cloud = new Rectangle(WIDTH / 2 - 10, HEIGHT / 2 - 10 , 50, 30); //Spielerobjekt erstellen und Größe festlegen + Startkoordinaten
+
 
         random = new Random();
 
@@ -243,7 +242,7 @@ public class FlappyCloud implements ActionListener, MouseListener {
             for (Rectangle obstacle : obstacles) {
 
                 //Score um 1 erhöhen
-                if(cloud.x + cloud.width / 2 > obstacle.x + obstacle.width / 2 - 10 && cloud.x + cloud.width / 2 < obstacle.x + obstacle.width / 2 + 10){  ///// MIN 54
+                if(obstacle.y == 0 && cloud.x + cloud.width / 2 > obstacle.x + obstacle.width / 2 - 5 && cloud.x + cloud.width / 2 < obstacle.x + obstacle.width / 2 + 10){  ///// MIN 54
                     score++;
                 }
 
@@ -284,5 +283,24 @@ public class FlappyCloud implements ActionListener, MouseListener {
     @Override
     public void mouseExited(MouseEvent e) {
 
+    }
+
+    //Keylistener-Methoden
+    @Override
+    public void keyTyped(KeyEvent e) {
+
+    }
+
+    @Override
+    public void keyPressed(KeyEvent e) {
+
+    }
+
+    //Beim loslassen von Space soll die Methode Jump ebenfalls ausgeführt werden, muss anschließend im Jframe noch hinzugefügt werden
+    @Override
+    public void keyReleased(KeyEvent e) {
+        if(e.getKeyCode() == KeyEvent.VK_SPACE){
+            jump();
+        }
     }
 }
