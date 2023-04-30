@@ -61,7 +61,6 @@ public class FlappyCloud implements ActionListener, MouseListener, KeyListener {
 
         random = new Random();
 
-
         addObstacles(true);
         addObstacles(true);
         addObstacles(true);
