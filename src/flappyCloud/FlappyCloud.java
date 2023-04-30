@@ -5,6 +5,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.Random;
 import javax.swing.Timer;
 
 public class FlappyCloud implements ActionListener {
@@ -18,7 +19,14 @@ public class FlappyCloud implements ActionListener {
 
     public Rectangle cloud; // Field für unsere Cloud/Spielfigur
 
-    public ArrayList<Rectangle> obstacle;
+    public ArrayList<Rectangle> obstacles;   //Arraylist vom Datentyp Rectangle
+
+    public Random random;
+
+    //Fields Spieler
+    public int ticks;
+    public int yMotion;
+
 
     //Constructor
     public FlappyCloud(){
@@ -28,7 +36,6 @@ public class FlappyCloud implements ActionListener {
          */
         JFrame jframe = new JFrame();   //Neues JFrame objekt instanziieren
         Timer timer = new Timer(20, this);
-
 
 
         //###########################################
@@ -42,7 +49,16 @@ public class FlappyCloud implements ActionListener {
         jframe.setVisible(true);        //Sichtbarkeit herstellen
         jframe.setTitle("Flappy Cloud");    //Titel festlegen
 
+        obstacles = new ArrayList<Rectangle>(); //Arraylist für Hindernisse erstellen
         cloud = new Rectangle(WIDTH / 2 - 10, HEIGHT / 2 - 10 , 50, 30); //Spielerobjekt erstellen und Größe festlegen + Startkoordinaten
+
+        random = new Random();
+
+
+        addObstacles(true);
+        addObstacles(true);
+        addObstacles(true);
+        addObstacles(true);
 
         timer.start();
 
@@ -50,13 +66,32 @@ public class FlappyCloud implements ActionListener {
 
 
     /**
-     * Methode für die Hindernisse
+     * Methode zum Erstellen der Hindernisse
      * @param g
      * @param obstacle
      */
-    public void obstacles(Graphics g, Rectangle obstacle){
+    public void paintObstacles(Graphics g, Rectangle obstacle){
         g.setColor(Color.green.darker());   //Farbe der Hindernisse festlegen
         g.fillRect(obstacle.x, obstacle.y, obstacle.width, obstacle.height);    //Hindernisse befüllen
+    }
+
+    public void addObstacles(boolean start){
+        int gap = 300; //Abstand zwischen den Hindernissen
+        int width = 100; //Breite der Hindernisse
+        int height = 50 + random.nextInt(300); //Höhe der Hindernisse festlegen. Minimum 50, Maximum 300. Random erzeugt, innerhalb des Bereichs
+
+        if(start){
+            /**
+             * Hinzufügen eines neuen Elements in die ArrayList "obstacles".
+             * Video Minute 27, 31
+             */
+            obstacles.add(new Rectangle(WIDTH + width + obstacles.size() * 300, HEIGHT - height - 120, width, height)); //Unteres Hindernis, Min 27
+            obstacles.add(new Rectangle(WIDTH + width + (obstacles.size() -1) * 300, 0, width, HEIGHT - height - gap)); //Oberes Hindernis
+        }else{
+            obstacles.add(new Rectangle(obstacles.get(obstacles.size() -1).x + 600, HEIGHT -height - 120, width, height)); // Min 31
+            obstacles.add(new Rectangle(obstacles.get(obstacles.size() -1).x, 0, width, HEIGHT - height - gap)); // Min 31
+        }
+
     }
 
 
@@ -83,7 +118,7 @@ public class FlappyCloud implements ActionListener {
         g.fillRect(0, HEIGHT - 150, WIDTH, 150); //Bodenmaße definieren und mit Farbe füllen
 
         /**
-         * Graßfläche
+         * Grasfläche
          */
 
         g.setColor(Color.GREEN);    //Bodenfarbe festlegen
@@ -99,9 +134,21 @@ public class FlappyCloud implements ActionListener {
     }
 
 
-    //Erstellte Methode durch implementieren des Actionlisteners
+    //Erstellte Methode durch Implementieren des Actionlisteners
     @Override
     public void actionPerformed(ActionEvent e) {
+
+        /**
+         * Fallmechanismus
+         */
+        ticks++;
+
+        if(ticks % 2 == 0 && yMotion < 15){
+            yMotion += 2;
+        }
+        cloud.y += yMotion;
+
         renderer.repaint();
+
     }
 }
