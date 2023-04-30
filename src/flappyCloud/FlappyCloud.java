@@ -63,6 +63,11 @@ public class FlappyCloud implements ActionListener, MouseListener {
         random = new Random();
 
 
+        addObstacles(true);
+        addObstacles(true);
+        addObstacles(true);
+        addObstacles(true);
+
         timer.start();
 
     }
@@ -148,6 +153,11 @@ public class FlappyCloud implements ActionListener, MouseListener {
             g.drawString("Click to start", 100, HEIGHT / 2 - 50);
         }
 
+        //Score als String auf die Spieloberfläche drawen
+        if(!gameOver && hasGameStarted){
+            g.drawString(String.valueOf(score), WIDTH / 2 - 25, 100);
+        }
+
     }
     //###################################################
 
@@ -182,8 +192,6 @@ public class FlappyCloud implements ActionListener, MouseListener {
 
             yMotion -= 10;
         }
-
-
 
     }
 
@@ -233,6 +241,13 @@ public class FlappyCloud implements ActionListener, MouseListener {
              * Kollisionserkennung, direkt nach Bewegung der Spielfigur (cloud.y += yMotion), gameOver-Fälle definieren
              */
             for (Rectangle obstacle : obstacles) {
+
+                //Score um 1 erhöhen
+                if(cloud.x + cloud.width / 2 > obstacle.x + obstacle.width / 2 - 10 && cloud.x + cloud.width / 2 < obstacle.x + obstacle.width / 2 + 10){  ///// MIN 54
+                    score++;
+                }
+
+                //KP
                 if(obstacle.intersects(cloud)){
                     gameOver = true;
                 }
