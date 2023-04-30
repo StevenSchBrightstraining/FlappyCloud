@@ -4,6 +4,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 import javax.swing.Timer;
 
 public class FlappyCloud implements ActionListener {
@@ -16,6 +17,8 @@ public class FlappyCloud implements ActionListener {
     public Renderer renderer; //############################
 
     public Rectangle cloud; // Field für unsere Cloud/Spielfigur
+
+    public ArrayList<Rectangle> obstacle;
 
     //Constructor
     public FlappyCloud(){
@@ -37,12 +40,25 @@ public class FlappyCloud implements ActionListener {
         jframe.setResizable(false); //Festlegen, dass die Fenstergröße nachtrglich nicht mehr geändert werden kann.
         jframe.setSize(WIDTH, HEIGHT);  //Größe des jframes festlegen
         jframe.setVisible(true);        //Sichtbarkeit herstellen
+        jframe.setTitle("Flappy Cloud");    //Titel festlegen
 
         cloud = new Rectangle(WIDTH / 2 - 10, HEIGHT / 2 - 10 , 50, 30); //Spielerobjekt erstellen und Größe festlegen + Startkoordinaten
 
         timer.start();
 
     }
+
+
+    /**
+     * Methode für die Hindernisse
+     * @param g
+     * @param obstacle
+     */
+    public void obstacles(Graphics g, Rectangle obstacle){
+        g.setColor(Color.green.darker());   //Farbe der Hindernisse festlegen
+        g.fillRect(obstacle.x, obstacle.y, obstacle.width, obstacle.height);    //Hindernisse befüllen
+    }
+
 
     //Automatisch erstellt aus "Renderer.java"
     //###################################################
@@ -63,8 +79,16 @@ public class FlappyCloud implements ActionListener {
         /**
          * Boden
          */
-        g.setColor(Color.GREEN);    //Bodenfarbe festlegen
+        g.setColor(Color.pink);    //Bodenfarbe festlegen
         g.fillRect(0, HEIGHT - 150, WIDTH, 150); //Bodenmaße definieren und mit Farbe füllen
+
+        /**
+         * Graßfläche
+         */
+
+        g.setColor(Color.GREEN);    //Bodenfarbe festlegen
+        g.fillRect(0, HEIGHT - 150, WIDTH, 20); //Bodenmaße definieren und mit Farbe füllen
+
 
     }
     //###################################################
