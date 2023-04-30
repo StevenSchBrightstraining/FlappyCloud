@@ -15,6 +15,8 @@ public class FlappyCloud implements ActionListener {
 
     public Renderer renderer; //############################
 
+    public Rectangle cloud; // Field für unsere Cloud/Spielfigur
+
     //Constructor
     public FlappyCloud(){
 
@@ -23,6 +25,8 @@ public class FlappyCloud implements ActionListener {
          */
         JFrame jframe = new JFrame();   //Neues JFrame objekt instanziieren
         Timer timer = new Timer(20, this);
+
+
 
         //###########################################
         renderer = new Renderer();
@@ -34,6 +38,8 @@ public class FlappyCloud implements ActionListener {
         jframe.setSize(WIDTH, HEIGHT);  //Größe des jframes festlegen
         jframe.setVisible(true);        //Sichtbarkeit herstellen
 
+        cloud = new Rectangle(WIDTH / 2 - 10, HEIGHT / 2 - 10 , 50, 30); //Spielerobjekt erstellen und Größe festlegen + Startkoordinaten
+
         timer.start();
 
     }
@@ -41,6 +47,25 @@ public class FlappyCloud implements ActionListener {
     //Automatisch erstellt aus "Renderer.java"
     //###################################################
     public void repaint(Graphics g) {
+        /**
+         * Hintergrund
+         */
+        g.setColor(Color.gray); //Hintergrundfarbe festlegen
+        g.fillRect(0, 0, WIDTH, HEIGHT); //Hintergrundfarbe anwenden, Gesamtgröße (WIDTH, HEIGHT) übernehmen
+
+
+        /**
+         * Spielfigur
+         */
+        g.setColor(Color.orange);   //Farbe der Spielfigur festlegen
+        g.fillRect(cloud.x, cloud.y, cloud.width, cloud.height);    //Spielfigur mit Farbe füllen, Koordinaten der Spielfigur
+
+        /**
+         * Boden
+         */
+        g.setColor(Color.GREEN);    //Bodenfarbe festlegen
+        g.fillRect(0, HEIGHT - 150, WIDTH, 150); //Bodenmaße definieren und mit Farbe füllen
+
     }
     //###################################################
 
