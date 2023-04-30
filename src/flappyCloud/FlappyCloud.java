@@ -4,11 +4,13 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.util.ArrayList;
 import java.util.Random;
 import javax.swing.Timer;
 
-public class FlappyCloud implements ActionListener {
+public class FlappyCloud implements ActionListener, MouseListener {
 
     //Fields
     public static FlappyCloud flappyCloud;
@@ -27,8 +29,10 @@ public class FlappyCloud implements ActionListener {
     public int ticks;
     public int yMotion;
 
+    public int score;
+
     public boolean gameOver;
-    public boolean hasGameStarted = true;
+    public boolean hasGameStarted = false;
 
 
     //Constructor
@@ -51,17 +55,13 @@ public class FlappyCloud implements ActionListener {
         jframe.setSize(WIDTH, HEIGHT);  //Größe des jframes festlegen
         jframe.setVisible(true);        //Sichtbarkeit herstellen
         jframe.setTitle("Flappy Cloud");    //Titel festlegen
+        jframe.addMouseListener(this);     //Mouselistener hinzugügen, "this" bezieht sich auf den in dieser Klasse erstelltem Listener
 
         obstacles = new ArrayList<Rectangle>(); //Arraylist für Hindernisse erstellen
         cloud = new Rectangle(WIDTH / 2 - 10, HEIGHT / 2 - 10 , 50, 30); //Spielerobjekt erstellen und Größe festlegen + Startkoordinaten
 
         random = new Random();
 
-
-        addObstacles(true);
-        addObstacles(true);
-        addObstacles(true);
-        addObstacles(true);
 
         timer.start();
 
@@ -135,7 +135,7 @@ public class FlappyCloud implements ActionListener {
         }
 
         /**
-         * Game Over Darstellung
+         * Game Over Darstellung, Spielbeginn
          */
         g.setColor(Color.white);
         g.setFont(new Font("Georgia", 1, 100));
@@ -144,12 +144,47 @@ public class FlappyCloud implements ActionListener {
             g.drawString("Game Over", 75, HEIGHT / 2 - 50);
         }
 
+        if(!hasGameStarted){
+            g.drawString("Click to start", 100, HEIGHT / 2 - 50);
+        }
+
     }
     //###################################################
 
     //Main
     public static void main(String[] args) {
         flappyCloud = new FlappyCloud();    //Alternativ: FlappyCloud flappycloud = new FlappyCloud(); dafür das Field flappycloud löschen
+    }
+
+    public void jump(){
+
+        if(gameOver){
+
+            cloud = new Rectangle(WIDTH / 2 -10, HEIGHT / 2 - 10, 20, 20);
+            obstacles.clear();
+            yMotion = 0;
+            score = 0;
+
+            addObstacles(true);
+            addObstacles(true);
+            addObstacles(true);
+            addObstacles(true);
+
+            gameOver = false;
+        }
+
+        if(!hasGameStarted){
+            hasGameStarted = true;
+        }else if (!gameOver){
+            if(yMotion > 0){
+                yMotion = 0;
+            }
+
+            yMotion -= 10;
+        }
+
+
+
     }
 
 
@@ -208,5 +243,31 @@ public class FlappyCloud implements ActionListener {
 
         }
         renderer.repaint();
+    }
+
+    //Mouselistener-Methoden
+    @Override
+    public void mouseClicked(MouseEvent e) {
+        jump(); //Wenn die Mouse zum Beginn des Spiels geklickt wird, um das Spiel zu starten, wird die Methode jump() erstmals aufgerufen
+    }
+
+    @Override
+    public void mousePressed(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseReleased(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseEntered(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseExited(MouseEvent e) {
+
     }
 }
