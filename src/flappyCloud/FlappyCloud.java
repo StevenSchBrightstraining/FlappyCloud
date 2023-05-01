@@ -1,3 +1,4 @@
+
 package flappyCloud;
 
 import javax.swing.*;
@@ -16,9 +17,9 @@ public class FlappyCloud implements ActionListener, MouseListener, KeyListener {
 
     public Renderer renderer; //############################
 
-    public Rectangle cloud; // Field für unsere Cloud/Spielfigur
+    public Rectangle cloud; // Field für unsere Cloud/Spielfigur, Datentyp Rectangle
 
-    public ArrayList<Rectangle> obstacles;   //Arraylist vom Datentyp Rectangle
+    public ArrayList<Rectangle> obstacles;   //Arraylist vom Datentyp Rectangle für die Hindernisse
 
     public Random random;
 
@@ -36,35 +37,35 @@ public class FlappyCloud implements ActionListener, MouseListener, KeyListener {
     public FlappyCloud(){
 
         /**
-         * JFrame Instanziierung und Grundeinstellungen
+         * JFrame Instanziierung und Grundeinstellungen für das Spielfeld
          */
+
         JFrame jframe = new JFrame();   //Neues JFrame objekt instanziieren
-        Timer timer = new Timer(20, this);
-
+        Timer timer = new Timer(20, this);  //Timer erzeugen
 
         //###########################################
-        renderer = new Renderer();
-        jframe.add(renderer);
+        renderer = new Renderer();                //#
+        jframe.add(renderer);                     //#
         //###########################################
 
-        jframe.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);  //Festlegen, dass das Programm beim Schließen beendet wird. (X)
-        jframe.setResizable(false); //Festlegen, dass die Fenstergröße nachtrglich nicht mehr geändert werden kann.
-        jframe.setSize(WIDTH, HEIGHT);  //Größe des jframes festlegen
-        jframe.setVisible(true);        //Sichtbarkeit herstellen
+        jframe.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);  //Festlegen, dass das Programm beim Schließen beendet wird.
+        jframe.setResizable(false); //Festlegen, dass die Fenstergröße Nachtraeglich nicht mehr verändert werden kann.
+        jframe.setSize(WIDTH, HEIGHT);  //Größe des Spielfeldes zuweisen
+        jframe.setVisible(true);        //Sichtbarkeit des Spielfeldes
         jframe.setTitle("Flappy Cloud");    //Titel festlegen
-        jframe.addMouseListener(this);     //Mouselistener hinzugügen, "this" bezieht sich auf den in dieser Klasse erstelltem Listener
-        jframe.addKeyListener(this);    //KeyListener hinzufügen, sodass mit Space die Methode jump() ebenfalls ausgeführt werden kann
+        jframe.addMouseListener(this);     //Mouselistener zum jframe hinzugügen. "this" bezieht sich auf den in dieser Klasse erstelltem Listener
+        jframe.addKeyListener(this);    //KeyListener zum jframe hinzufügen
 
         obstacles = new ArrayList<Rectangle>(); //Arraylist für Hindernisse erstellen
-        cloud = new Rectangle(WIDTH / 2 - 10, HEIGHT / 2 - 10 , 50, 30); //Spielerobjekt erstellen und Größe festlegen + Startkoordinaten
 
+        cloud = new Rectangle(390, 390, 50, 30); //Spielerobjekt erstellen und Größe, sowie Koordinaten festlegen
 
-        random = new Random();
+        random = new Random();  //Random instanziieren (Wird später zum Erzeugen von Hindernissen benötigt)
 
-        addObstacles(true);
-        addObstacles(true);
-        addObstacles(true);
-        addObstacles(true);
+        addObstacles(); //Methode zum Erzeugen von Hindernispaaren
+        addObstacles();
+        addObstacles();
+        addObstacles();
 
         timer.start();
 
@@ -81,22 +82,23 @@ public class FlappyCloud implements ActionListener, MouseListener, KeyListener {
         g.fillRect(obstacle.x, obstacle.y, obstacle.width, obstacle.height);    //Hindernisse befüllen
     }
 
-    public void addObstacles(boolean start){
+    public void addObstacles(){
         int gap = 300; //Abstand zwischen den Hindernissen
-        int width = 100; //Breite der Hindernisse
+        int width = 80; //Breite der Hindernisse
         int height = 50 + random.nextInt(300); //Höhe der Hindernisse festlegen. Minimum 50, Maximum 300. Random erzeugt, innerhalb des Bereichs
 
-        if(start){
+        //if(start){
             /**
              * Hinzufügen eines neuen Elements in die ArrayList "obstacles".
              * Video Minute 27, 31
              */
             obstacles.add(new Rectangle(WIDTH + width + obstacles.size() * 300, HEIGHT - height - 120, width, height)); //Unteres Hindernis, Wird außerhalb der Spielfeldbreite erzeugt. Min 27
             obstacles.add(new Rectangle(WIDTH + width + (obstacles.size() -1) * 300, 0, width, HEIGHT - height - gap)); //Oberes Hindernis
-        }else{
-            obstacles.add(new Rectangle(obstacles.get(obstacles.size() -1).x + 600, HEIGHT -height - 120, width, height)); // Min 31
-            obstacles.add(new Rectangle(obstacles.get(obstacles.size() -1).x, 0, width, HEIGHT - height - gap)); // Min 31
-        }
+
+        //}else{
+        //    obstacles.add(new Rectangle(obstacles.get(obstacles.size() -1).x + 600, HEIGHT -height - 120, width, height)); // Min 31
+         //   obstacles.add(new Rectangle(obstacles.get(obstacles.size() -1).x, 0, width, HEIGHT - height - gap)); // Min 31
+        //}
 
     }
 
@@ -152,8 +154,10 @@ public class FlappyCloud implements ActionListener, MouseListener, KeyListener {
         }
 
         //Score als String auf die Spieloberfläche drawen
+        g.setColor(Color.black);
+        g.setFont(new Font("Arial", 1, 20));
         if(!gameOver && hasGameStarted){
-            g.drawString(String.valueOf(score), WIDTH / 2 - 25, 100);
+            g.drawString("Points: " + String.valueOf(score), 10, 100);
         }
 
     }
@@ -168,15 +172,15 @@ public class FlappyCloud implements ActionListener, MouseListener, KeyListener {
 
         if(gameOver){
 
-            cloud = new Rectangle(WIDTH / 2 -10, HEIGHT / 2 - 10, 20, 20);
+            cloud = new Rectangle(WIDTH / 2 -10, HEIGHT / 2 - 10, 50, 30);
             obstacles.clear();
             yMotion = 0;
             score = 0;
 
-            addObstacles(true);
-            addObstacles(true);
-            addObstacles(true);
-            addObstacles(true);
+            addObstacles();
+//            //addObstacles(true);
+//            addObstacles(true);
+//            addObstacles(true);
 
             gameOver = false;
         }
@@ -221,7 +225,7 @@ public class FlappyCloud implements ActionListener, MouseListener, KeyListener {
                     obstacles.remove(obstacle);
 
                     if(obstacle.y == 0){
-                        addObstacles(false);
+                        addObstacles();
                     }
                 }
             }
@@ -303,3 +307,208 @@ public class FlappyCloud implements ActionListener, MouseListener, KeyListener {
         }
     }
 }
+
+//-----------------------------
+//
+//package flappyCloud;
+//
+//import javax.swing.*;
+//import java.awt.*;
+//import java.awt.event.*;
+//import java.util.ArrayList;
+//import java.util.Random;
+//import javax.swing.Timer;
+//
+//public class FlappyCloud implements ActionListener, MouseListener, KeyListener {
+//
+//    //Fields
+//    public static FlappyCloud flappyCloud;
+//    public final int WIDTH = 800;
+//    public final int HEIGHT = 800;
+//
+//    public Renderer renderer;
+//
+//    public Rectangle cloud;
+//
+//    public ArrayList<Rectangle> obstacles;
+//
+//    public Random random;
+//
+//
+//    public int ticks,yMotion,score;
+//
+//    public boolean gameOver,hasGameStarted=false;
+//
+//
+//    //Constructor
+//    public FlappyCloud(){
+//
+//        JFrame jframe = new JFrame();
+//        Timer timer = new Timer(20, this);
+//
+//        renderer=new Renderer();
+//        jframe.add(renderer);
+//
+//        jframe.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+//        jframe.setResizable(false);
+//        jframe.setSize(WIDTH, HEIGHT);
+//        jframe.setVisible(true);
+//        jframe.setTitle("Flappy Cloud");
+//
+//        obstacles=new ArrayList<>();
+//
+//        cloud=new Rectangle(WIDTH/2-10,HEIGHT/2-10 ,50,30);
+//
+//        random=new Random();
+//
+//        addObstacles(true);
+//        addObstacles(true);
+//        addObstacles(true);
+//        addObstacles(true);
+//
+//        jframe.addMouseListener(this);
+//        jframe.addKeyListener(this);
+//
+//        timer.start();
+//
+//    }
+//
+//
+//    public void paintObstacles(Graphics g, Rectangle obstacle){
+//        g.setColor(Color.YELLOW.darker());
+//        g.fillRect(obstacle.x, obstacle.y, obstacle.width, obstacle.height);}
+//
+//
+//    public void addObstacles(boolean start){
+//        int gap=300,width=100,height=50+random.nextInt(300);
+//
+//        if(start){
+//            obstacles.add(new Rectangle(WIDTH + width + obstacles.size() * 300,
+//                    HEIGHT - height - 120, width, height));
+//            obstacles.add(new Rectangle(WIDTH + width + (obstacles.size() -1) * 300,
+//                    0, width, HEIGHT - height - gap));
+//        }else{
+//            obstacles.add(new Rectangle(obstacles.get(obstacles.size() -1).x + 600,
+//                    HEIGHT-height-120,width,height));
+//            obstacles.add(new Rectangle(obstacles.get(obstacles.size() -1).x,
+//                    0,width,HEIGHT-height-gap));
+//        }
+//    }
+//
+//    public void repaint(Graphics g) {
+//
+//        g.setColor(Color.gray);
+//        g.fillRect(0, 0, WIDTH, HEIGHT);
+//
+//        g.setColor(Color.orange);
+//        g.fillRect(cloud.x , cloud.y ,cloud.width ,cloud.height);
+//
+//        g.setColor(Color.pink);
+//        g.fillRect(0 ,HEIGHT-150 ,WIDTH ,150);
+//
+//
+//        g.setColor(Color.GREEN);
+//        g.fillRect(0 ,HEIGHT-150 ,WIDTH ,20);
+//
+//
+//        for(Rectangle obstacles:obstacles){
+//            paintObstacles(g,obstacles);}
+//
+//        if(gameOver){g.drawString("Game Over",75,(int)(HEIGHT/2.5));
+//        }else if(!hasGameStarted){g.drawString("Click to start",100,(int)(HEIGHT/2.5));}
+//
+//        if(!gameOver && hasGameStarted){g.drawString(String.valueOf(score),WIDTH /2-25,(int)(100));}
+//
+//    }
+//
+//
+//    public static void main(String[] args) {flappyCloud = new FlappyCloud(); }
+//
+//
+//    public void jump(){
+//
+//        if(gameOver){
+//
+//            cloud=new Rectangle(WIDTH /2-10 ,
+//                    HEIGHT /2-10 ,
+//                    (int)(50),
+//                    (int)(30));
+//
+//            obstacles.clear();
+//
+//            yMotion=score=0;
+//
+//            addObstacles(true);
+//            addObstacles(true);
+//            addObstacles(true);
+//            addObstacles(true);
+//
+//            gameOver=false;
+//        }
+//
+//        if(!hasGameStarted){hasGameStarted=true;}
+//        else if (!gameOver){
+//            if(yMotion>0){yMotion=0;}
+//            yMotion-=10;
+//        }
+//    }
+//
+//
+//    public void actionPerformed(ActionEvent e) {
+//
+//        int speed=10;
+//        ticks++;
+//
+//        if(hasGameStarted){
+//
+//            for(int i=0;i<obstacles.size();i++){
+//                Rectangle obstacle = obstacles.get(i);
+//                obstacle.x -= speed;}
+//
+//            for (int i = 0; i < obstacles.size(); i++) {
+//                Rectangle obstacle = obstacles.get(i);
+//
+//                if(obstacle.x + obstacle.width < 0){
+//                    obstacles.remove(obstacle);
+//
+//                    if(obstacle.y == 0){
+//                        addObstacles(false);
+//                    }
+//                }
+//            }
+//
+//            if(ticks %2== 0 && yMotion <15){yMotion +=2;}
+//
+//            cloud.y+=yMotion;
+//
+//            for(Rectangle obstacle:obstacles){
+//
+//                if(obstacle.y == 0 && cloud.x + cloud.width /2 > obstacle.x + obstacle.width /2 -5
+//                        && cloud.x + cloud.width /2 < obstacle.x+obstacle.width/2+10)
+//                    score++;
+//
+//
+//                if(obstacle.intersects(cloud)){gameOver=true;}}
+//
+//            if(cloud.y > HEIGHT-120 || cloud.y< 0 ){gameOver=true;}
+//
+//            renderer.repaint();
+//        }}
+//
+//
+//    public void mouseClicked(MouseEvent e) {jump();}
+//    public void mousePressed(MouseEvent e){}
+//    public void mouseReleased(MouseEvent e){}
+//    public void mouseEntered(MouseEvent e){}
+//    public void mouseExited(MouseEvent e){}
+//
+//
+//    public void keyTyped(KeyEvent e){}
+//
+//
+//    public void keyPressed(KeyEvent e) {}
+//
+//    public void keyReleased(KeyEvent e) {
+//        if(e.getKeyCode() == KeyEvent.VK_SPACE){jump();}
+//    }
+//}

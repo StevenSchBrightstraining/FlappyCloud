@@ -4,15 +4,15 @@ import java.awt.*;
 
 public class Cloud {
 
-    public Rectangle cloud;
+    public Rectangle container;
     public int xPos = 800 / 2 - 10;
     public int yPos = 800 / 2 - 10;
 
-    public final int WIDTH = 50;
-    public final int HEIGHT = 30;
+    public final int WIDTH = 20;
+    public final int HEIGHT = 20;
 
     public Cloud(){
-        cloud = new Rectangle(xPos, yPos, WIDTH, HEIGHT);
+        container = new Rectangle(xPos, yPos, WIDTH, HEIGHT);
     }
 
     public int getxPos() {
@@ -29,5 +29,17 @@ public class Cloud {
 
     public int getHEIGHT() {
         return HEIGHT;
+    }
+
+    public Rectangle getContainer() {
+        return container;
+    }
+
+    public void setxPos(int xPos) {
+        this.xPos = xPos;
+    }
+
+    public void setyPos(int yPos) {
+        this.yPos = yPos;
     }
 }
